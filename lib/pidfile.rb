@@ -3,7 +3,7 @@ class PidFile
 
   class DuplicateProcessError < RuntimeError; end
 
-  VERSION = '0.3.0'
+  VERSION = '0.3.1'
 
   DEFAULT_OPTIONS = {
     :pidfile => File.basename($0, File.extname($0)) + ".pid",
@@ -37,7 +37,7 @@ class PidFile
     if self.pidfile_exists?
       if self.class.running?(@pidpath)
         raise DuplicateProcessError, "Process (#{$0} - #{self.class.pid(@pidpath)}) is already running."
-        
+
         exit! # exit without removing the existing pidfile
       end
 
@@ -98,7 +98,8 @@ class PidFile
   # Returns the PID, if any, of the instantiating process
   def self.pid(path=nil)
     if pidfile_exists?(path)
-      open(path, 'r').read.to_i
+      pid_string = open(path, 'r').read
+      pid_string.empty? ? nil : pid_string.to_i
     end
   end
 
